@@ -1,0 +1,37 @@
+# This makefile assumes the following project structure
+# root
+#   | src (folder)
+#   | obj (folder)
+#   | makefile
+# the obj folder is created automatically
+
+PROJ_NAME=main
+C_SOURCE=$(wildcard ./src/*.c)
+H_SOURCE=$(wildcard ./src/*.h)
+OBJ=$(subst .c,.o,$(subst src,obj,$(C_SOURCE)))
+CC=gcc
+CC_FLAGS=-std=c17 -c -W -Wall -Werror
+RM = rm -rf
+
+all: objFolder $(PROJ_NAME)
+
+$(PROJ_NAME): $(OBJ)
+	$(CC) $^ -o $@
+
+./obj/%.o: ./src/%.c ./src/%.h
+	$(CC) $< $(CC_FLAGS) -o $@
+
+./obj/main.o: ./src/main.c $(H_SOURCE)
+	$(CC) $< $(CC_FLAGS) -o $@
+
+objFolder:
+	@ mkdir -p obj
+
+run: objFolder $(PROJ_NAME)
+	./$(PROJ_NAME)
+
+clean:
+	@ $(RM) ./obj/*.o $(PROJ_NAME) *~ ||:
+	@ rmdir obj ||:
+
+.PHONY: all clean run
