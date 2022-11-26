@@ -5,8 +5,9 @@
 #         Ou opcionalmente ela pode ser omitida se o devenv.exe estiver no PATH do sistema
 
 $vs_path = "C:\Program Files\Microsoft Visual Studio\2022\Community\Common7\IDE\devenv.exe"
-$sln_name = Get-ChildItem -Path . -Filter *.sln `
-| Select-Object -First 1 `
-| ForEach-Object { "$($_.BaseName)$($_.Extension)" }
+$sln_name = gci .\* -Include "*.sln", "*.csproj" `
+	| Sort-Object -Descending -Property Extension `
+	| Select-Object -First 1 `
+	| ForEach-Object { "$($_.BaseName)$($_.Extension)" }
 
-Start-Process $vs_path $sln_name
+start $vs_path $sln_name
